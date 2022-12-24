@@ -6,7 +6,7 @@
 #include "Team.h"
 
 Team::Team(int teamId, int points): teamId(teamId), points(points),numPlayers(0), teamValid(false), goalKeepers(0),
-            sumGoals(0), sumCards(0), gamesPlayed(0),
+            sumGoals(0), sumCards(0), gamesPlayed(0), knockedOut(false),
             playersById(new AVLTree<std::shared_ptr<Player>>(Player::compare_playerID)),
             playersByGoals(new AVLTree<std::shared_ptr<Player>>(Player::compare_playerGoals)){}
 
@@ -14,24 +14,17 @@ void Team::incNumPlayers() {
     this->numPlayers++;
 }
 //Getters
-AVLTree<std::shared_ptr<Player>>* Team::getPlayersById() {
-    return this->playersById;
-}
-
-AVLTree<std::shared_ptr<Player>>* Team::getPlayersByGoals(){
-    return this->playersByGoals;
-}
-std::shared_ptr<Player> Team::getTopScorer() {
-    if(!this->topScorer.lock()) {
-        return nullptr;
-    }
-    return this->topScorer.lock();
-}
 
 int Team::getSumCards() {
     return this->sumCards;
 }
+int Team::getSumAbility(){
+    return this->sumAbility;
+}
 
+bool Team::getKnockedOut() {
+    return this->knockedOut;
+}
 int Team::getSumGoals() {
     return this->sumGoals;
 }
@@ -55,6 +48,12 @@ void Team::setGoalkeepers(int num){
     this->goalKeepers = num;
 }
 
+void Team::setKnockedOut(bool knockedOut) {
+    this->knockedOut = knockedOut;
+}
+void Team::addSumAbility(int ability) {
+    this->sumAbility += ability;
+}
 void Team::incGoalKeepers(){
     this->goalKeepers++;
 }
@@ -76,6 +75,7 @@ void Team::setNumPlayers(int numPlayers) {
 void Team::setSumCards(int sumCards) {
     this->sumCards = sumCards;
 }
+
 
 void Team::setSumGoals(int sumGoals) {
     this->sumGoals = sumGoals;

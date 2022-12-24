@@ -4,7 +4,9 @@
 #ifndef DATA_STRUCTURES_1_PLAYER_H
 #define DATA_STRUCTURES_1_PLAYER_H
 #include "AVLTree.h"
+#include ""
 #include "Team.h"
+#include "wet2util.h"
 
 class Team;
 
@@ -12,26 +14,24 @@ class Player{
 private:
     int playerId;
     int gamesPlayed;
-    int goals;
     int cardsReceived;
     bool goalKeeper;
-    std::weak_ptr<Team> player_team;
-    std::weak_ptr<Player> closest_above;
-    std::weak_ptr<Player> closest_below;
+    int ability;
+    const permutation_t &spirit;
 
 public:
     static int compare_playerID(const std::shared_ptr<Player> &a, const std::shared_ptr<Player> &b);
     static int compare_playerGoals(const std::shared_ptr<Player> &player1, const std::shared_ptr<Player> &player2);
     static int compare_playerCards(const std::shared_ptr<Player> &player1, const std::shared_ptr<Player> &player2);
-
-    Player(int playerId, int gamesPlayed, int goals, int cardsReceived, bool goalKeeper): playerId(playerId),
-    gamesPlayed(gamesPlayed), goals(goals), cardsReceived(cardsReceived), goalKeeper(goalKeeper){};
+    Player(int playerId, int gamesPlayed, int ability, int cardsReceived, bool goalKeeper, const permutation_t &spirit): playerId(playerId),
+    gamesPlayed(gamesPlayed), ability(ability), cardsReceived(cardsReceived), goalKeeper(goalKeeper), spirit(spirit){};
     Player(const Player& other);
     void update(int gamesPlayed, int scoredGoals, int cardsReceived);
     void updateTeam();
     int getGamesPlayed();
     int getPlayerGoals();
     int getCards();
+    int getAbility();
     int getPlayerId();
     bool getGoalKeeper();
     int getTeamId();
@@ -41,9 +41,11 @@ public:
     std::shared_ptr<Player> getClosestAbove();
     void setClosestBelow(const std::shared_ptr<Player>& player);
     void setClosestAbove(const std::shared_ptr<Player>& player);
+    void setAbility(int ability);
     void setGamesPlayed(int games);
     void setGoalKeeper(bool goalKeeper);
     void addGamesPlayed(int games);
+    void addCards(int cards);
     Player()=default;
     void setPlayerTeam(const std::shared_ptr<Team>& t);
     ////add play dtor

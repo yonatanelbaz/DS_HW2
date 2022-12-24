@@ -14,6 +14,12 @@ Player::Player(const Player& other){
     this -> closest_above = other.closest_above;
     this -> closest_below = other.closest_below;
 }
+Player::getAbility() {
+    return this->ability;
+}
+void Player::addCards(int cards) {
+    this->sumCards+=cards;
+}
 
 int Player::getTeamId(){
     return this-> player_team.lock() -> getTeamId();
@@ -39,6 +45,10 @@ bool Player::getGoalKeeper() {
 
 void Player::setGoalKeeper(bool goalKeeper) {
     this->goalKeeper = goalKeeper;
+}
+
+void setAbility(int ability) {
+    this->ability = ability;
 }
 
 void Player::update(int gamesPlayed, int scoredGoals, int cardsReceived) {

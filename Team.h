@@ -15,7 +15,9 @@ private:
     int goalKeepers;
     int sumGoals;
     int sumCards;
+    int sumAbility;
     int gamesPlayed;
+    bool knockedOut;
     AVLTree<std::shared_ptr<Player>> *playersById;
     AVLTree<std::shared_ptr<Player>> *playersByGoals;
     std::weak_ptr<Player> topScorer;
@@ -27,6 +29,8 @@ public:
     void setSumCards(int sumCards);
     int getSumCards();
     int getSumGoals();
+    int getSumAbility();
+    bool getKnockedOut();
     int getGamesPlayed();
     int getMatchScore();
     void decNumPlayers();
@@ -38,7 +42,9 @@ public:
     void setNumPoints(int points);
     void setTeamId(int teamId);
     void setTeamValid(bool teamVaild);
+    void setKnockedOut(bool knockedOut);
     void setTopScorer(const std::shared_ptr<Player>& player);
+    void addSumAbility(int ability);
     void incNumPlayers();
     int getTeamId();
     int getPoints();
@@ -48,7 +54,6 @@ public:
     void setGoalkeepers(int num);
     void incGoalKeepers();
     void incGamesPlayed();
-
     void setPlayersByGoals(AVLTree<std::shared_ptr<Player>>* playersByGoals);
     void setPlayersById(AVLTree<std::shared_ptr<Player>>* playersById);
 

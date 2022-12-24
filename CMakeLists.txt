@@ -13,4 +13,9 @@ add_executable(DS_HW2
         Player.h
         Team.cpp
         Team.h
-        AVLTree.h)
+        UnionFind.cpp
+        UnionFind.h
+        AVLTree.h
+        HashTable.cpp
+        HashTable.h
+        )

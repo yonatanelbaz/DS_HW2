@@ -15,6 +15,13 @@
 #ifndef WORLDCUP23A2_H_
 #define WORLDCUP23A2_H_
 
+#include "AVLTree.h"
+#include "Player.h"
+#include "Team.h"
+#include "stdio.h"
+#include "UnionFind.h"
+#include <memory>
+using namespace std;
 #include "wet2util.h"
 
 class world_cup_t {
@@ -22,7 +29,9 @@ private:
 	//
 	// Here you may add anything you want
 	//
-	
+	UnionFind worldCup;
+    AVLTree<std::shared_ptr<Team>> teamsTree;
+    int numberOfTeams;
 public:
 	// <DO-NOT-MODIFY> {
 	
