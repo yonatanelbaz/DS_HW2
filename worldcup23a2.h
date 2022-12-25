@@ -20,6 +20,7 @@
 #include "Team.h"
 #include "stdio.h"
 #include "UnionFind.h"
+#include "HashTable.h"
 #include <memory>
 using namespace std;
 #include "wet2util.h"

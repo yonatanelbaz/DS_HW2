@@ -10,11 +10,12 @@
 #include "worldcup23a2.h"
 #include "AVLTree.h"
 class HashTable {
-    struct playerStruct {
+    /*struct playerStruct {
         shared_ptr<Player> player;
         Node<playerStruct>* parent;
         shared_ptr<Team> team;
     };
+     */
 private:
     int numOfPlayers;
     int capacity;
@@ -22,10 +23,10 @@ private:
 
 public:
     HashTable(int value);
-    void insert(int id);
+    void insert(shared_ptr<Player> p, shared_ptr<Team> team);
     int hashFunc(int id);
     void extendRehash();
-    void shrinkRehash();
-
+    //void shrinkRehash();
+    Node<playerStruct>* find(int id);
 };
 #endif //DS_HW2_HASHTABLE_H

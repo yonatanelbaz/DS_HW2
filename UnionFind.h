@@ -10,21 +10,21 @@
 #include "HashTable.h"
 using namespace std;
 class UnionFind {
-    struct playerStruct {
-        int id;
-        int parentId;
-        int size;
-        shared_ptr<Team> team;
-    };
     private:
     HashTable players;
 
 
 public:
-
+    struct playerStruct {
+        shared_ptr<Player> player;
+        Node<playerStruct>* parentInTree;
+        shared_ptr<Team> team;
+        Node<playerStruct>* rootOfTree;
+    };
     UnionFind();
-    StatusType addPlayer(shared_ptr<Player> p);
-    Node<std::shared_ptr<Team>> * findTeam(int i);
-    Node<std::shared_ptr<Player>>* getPlayerNode(int id);
+    StatusType addPlayer(shared_ptr<Player> p, std::shared_ptr<Team> team);
+    std::shared_ptr<Team> findTeam(int id);
+    std::shared_ptr<Player> getPlayer(int id);
+    std::shared_ptr<Team> union(std::shared_ptr<Team> t1, std::shared_ptr<Team> t2);
 };
 #endif //DS_HW2_UNIONFIND_H

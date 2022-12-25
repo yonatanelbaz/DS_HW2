@@ -80,8 +80,35 @@ StatusType world_cup_t::add_player(int playerId, int teamId,
                                    const permutation_t &spirit, int gamesPlayed,
                                    int ability, int cards, bool goalKeeper)
 {
-	// TODO: Your code goes here
-	return StatusType::SUCCESS;
+    if(playerId<=0 || teamId<=0 || gamesPlayed<0 || cards<0 || spirit.isvalid()==false) {
+        return StatusType::INVALID_INPUT;
+    }
+    try {
+        std::shared_ptr<Player> newPlayer = std::make_shared<Player>(playerId, gamesPlayed, ability, cards, goalKeeper, spirit);
+        if(this->worldCup.getPlayer(playerId)!= nullptr) {
+            return StatusType::FAILURE;
+        }
+        std::shared_ptr<Team> newTeam = std::make_shared<Team>(teamId, 0);
+        auto newTeamNode = this->teamsTree.findVal(newTeam);
+        if (newTeamNode == nullptr) {
+            return StatusType::FAILURE;
+        }
+        newTeam = newTeamNode->getValue();
+        this->worldCup.addPlayer(newPlayer, newTeam);
+        newTeam->incNumPlayers();
+        newTeam->addSumAbility(ability);
+        newPlayer-> setGamesPlayed(gamesPlayed - newTeam -> getGamesPlayed());
+
+        if (newPlayer -> getGoalKeeper()) {
+            newTeam->incGoalKeepers();
+        }
+        newTeam->setTeamSpirit(newTeam->getTeamSpirit() * spirit);
+        // TODO: Your code goes here
+        return StatusType::SUCCESS;
+    }
+    catch(const std::exception& e) {
+        return StatusType::ALLOCATION_ERROR;
+    }
 }
 
 output_t<int> world_cup_t::play_match(int teamId1, int teamId2)
@@ -141,17 +168,26 @@ output_t<int> world_cup_t::play_match(int teamId1, int teamId2)
 
 output_t<int> world_cup_t::num_played_games_for_player(int playerId)
 {
-    if(playerId<=0) {
-        return StatusType::INVALID_INPUT;
+    try {
+        if(playerId<=0) {
+            return StatusType::INVALID_INPUT;
+        }
+        auto tempTeam = this->worldCup.findTeam(playerId);
+        if(tempTeam == nullptr) {
+            return StatusType::FAILURE;
+        }
+        if(tempTeam->getKnockedOut()==true) {
+            return StatusType::FAILURE;
+        }
+        auto tempPlayerNode = this->worldCup.getPlayer(playerId);
+        if(tempPlayerNode == nullptr) {
+            return StatusType::FAILURE;
+        }
+        return tempTeam->getGamesPlayed()+tempPlayerNode->getValue()->getGamesPlayed();
     }
-    auto tempTeam = this->worldCup.findTeam(playerId);
-    if(tempTeam == nullptr) {
-        return StatusType::FAILURE;
+    catch(const std::exception& e) {
+        return StatusType::ALLOCATION_ERROR;
     }
-    if(tempTeam->getValue()->getKnockedOut()==true) {
-        return StatusType::FAILURE;
-    }
-    return tempTeam->getValue()->getGamesPlayed();
     return StatusType::SUCCESS;
 	// TODO: Your code goes here
 	return 22;
@@ -162,15 +198,15 @@ StatusType world_cup_t::add_player_cards(int playerId, int cards)
     if(playerId<=0 || cards<0) {
         return StatusType::INVALID_INPUT;
     }
-    auto tempPlayerNode = this->worldCup.getPlayerNode(playerId);
-    if(tempPlayerNode == nullptr) {
+    auto tempPlayer = this->worldCup.getPlayer(playerId);
+    if(tempPlayer == nullptr) {
         return StatusType::FAILURE;
     }
     auto tempTeam = this->worldCup.findTeam(playerId);
-    if(tempTeam->getValue()->getKnockedOut()==true) {
+    if(tempTeam->getKnockedOut()==true) {
         return StatusType::FAILURE;
     }
-    tempPlayerNode->getValue()->addCards(cards);
+    tempPlayer->addCards(cards);
 	// TODO: Your code goes here
 	return StatusType::SUCCESS;
 }
@@ -180,11 +216,11 @@ output_t<int> world_cup_t::get_player_cards(int playerId)
     if(playerId<=0) {
         return StatusType::INVALID_INPUT;
     }
-    auto tempPlayerNode = worldCup.getPlayerNode(playerId);
-    if(tempPlayerNode == nullptr) {
+    auto tempPlayer = worldCup.getPlayer(playerId);
+    if(tempPlayer == nullptr) {
         return StatusType::FAILURE;
     }
-    return tempPlayerNode->getValue()->getCards();
+    return tempPlayer->getCards();
 	// TODO: Your code goes here
 	return StatusType::SUCCESS;
 }
@@ -233,6 +269,21 @@ output_t<int> world_cup_t::get_ith_pointless_ability(int i)
 
 output_t<permutation_t> world_cup_t::get_partial_spirit(int playerId)
 {
+    if(playerId<=0) {
+        return StatusType::INVALID_INPUT;
+    }
+    auto tempPlayerNode = this->worldCup.getPlayer(playerId);
+    if(tempPlayerNode == nullptr) {
+        return StatusType::FAILURE;
+    }
+    auto tempTeam = this->worldCup.findTeam(playerId);
+    if(tempTeam == nullptr) {
+        return StatusType::FAILURE;
+    }
+    if(tempTeam->getKnockedOut() == true) {
+        return StatusType::FAILURE;
+    }
+    
 	// TODO: Your code goes here
 	return permutation_t();
 }

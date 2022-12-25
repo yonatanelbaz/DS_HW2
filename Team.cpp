@@ -6,9 +6,11 @@
 #include "Team.h"
 
 Team::Team(int teamId, int points): teamId(teamId), points(points),numPlayers(0), teamValid(false), goalKeepers(0),
-            sumGoals(0), sumCards(0), gamesPlayed(0), knockedOut(false),
-            playersById(new AVLTree<std::shared_ptr<Player>>(Player::compare_playerID)),
-            playersByGoals(new AVLTree<std::shared_ptr<Player>>(Player::compare_playerGoals)){}
+            sumGoals(0), sumCards(0), sumAbility(0), gamesPlayed(0), knockedOut(false), teamSpirit(permutation_t::neutral()), lastInserted(nullptr), rootOfTree(
+                nullptr)
+            //playersById(new AVLTree<std::shared_ptr<Player>>(Player::compare_playerID)),
+            //playersByGoals(new AVLTree<std::shared_ptr<Player>>(Player::compare_playerGoals))
+            {}
 
 void Team::incNumPlayers() {
     this->numPlayers++;
@@ -60,6 +62,32 @@ void Team::incGoalKeepers(){
 int Team::getGamesPlayed() {
     return this -> gamesPlayed;
 }
+
+Node<UnionFind::playerStruct>* Team::getLastInserted() {
+    return this->lastInserted;
+}
+
+permutation_t& Team::getTeamSpirit() {
+    return this->teamSpirit;
+}
+
+void Team::setTeamSpirit(const permutation_t &spirit) {
+    //TODO:::check what to write here
+    this->teamSpirit(spirit);
+}
+
+void Team::setLastInserted(Node<UnionFind::playerStruct> *n) {
+    this->lastInserted = n;
+}
+
+Node<UnionFind::playerStruct>* Team::getRootOfTree() {
+    return this->rootOfTree;
+}
+
+void Team::setRootOfTree(Node<UnionFind::playerStruct>* root) {
+    this->rootOfTree = root;
+}
+
 void Team::incGamesPlayed() {
     this -> gamesPlayed++;
 }

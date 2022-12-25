@@ -3,7 +3,9 @@
 
 #include "AVLTree.h"
 #include "Player.h"
-
+#include "UnionFind.h"
+#include "HashTable.h"
+#include "wet2util.h"
 class Player;
 
 class Team {
@@ -18,19 +20,25 @@ private:
     int sumAbility;
     int gamesPlayed;
     bool knockedOut;
+    permutation_t teamSpirit;
     AVLTree<std::shared_ptr<Player>> *playersById;
     AVLTree<std::shared_ptr<Player>> *playersByGoals;
     std::weak_ptr<Player> topScorer;
-
+    Node<UnionFind::playerStruct>* lastInserted;
+    Node<UnionFind::playerStruct>* rootOfTree;
 public:
     explicit Team(int teamId, int points);
     ~Team();
     void setSumGoals(int sumGoals);
     void setSumCards(int sumCards);
     int getSumCards();
+    permutation_t& getTeamSpirit();
+    void setTeamSpirit(const permutation_t &spirit);
     int getSumGoals();
     int getSumAbility();
     bool getKnockedOut();
+    Node<UnionFind::playerStruct>* getLastInserted();
+    Node<UnionFind::playerStruct>* getRootOfTree();
     int getGamesPlayed();
     int getMatchScore();
     void decNumPlayers();
@@ -39,11 +47,13 @@ public:
     AVLTree<std::shared_ptr<Player>>* getPlayersByGoals();
     std::shared_ptr<Player> getTopScorer();
     void setNumPlayers(int numPlayers);
+    void setLastInserted(Node<UnionFind::playerStruct>* n);
     void setNumPoints(int points);
     void setTeamId(int teamId);
     void setTeamValid(bool teamVaild);
     void setKnockedOut(bool knockedOut);
     void setTopScorer(const std::shared_ptr<Player>& player);
+    void setRootOfTree(Node<UnionFind::playerStruct>* root);
     void addSumAbility(int ability);
     void incNumPlayers();
     int getTeamId();
