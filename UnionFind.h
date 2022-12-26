@@ -25,6 +25,7 @@ public:
     StatusType addPlayer(shared_ptr<Player> p, std::shared_ptr<Team> team);
     std::shared_ptr<Team> findTeam(int id);
     std::shared_ptr<Player> getPlayer(int id);
-    std::shared_ptr<Team> union(std::shared_ptr<Team> t1, std::shared_ptr<Team> t2);
+    std::shared_ptr<Team> union(std::shared_ptr<Team> buyerTeam, std::shared_ptr<Team> boughtTeam);
+    permutation_t& calcPartialSpirit(int playerId);
 };
 #endif //DS_HW2_UNIONFIND_H

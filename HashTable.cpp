@@ -57,6 +57,8 @@ void HashTable::insert(shared_ptr<Player> p, shared_ptr<Team> team) {
             newNode->setParent(nullptr);
             team->setRootOfTree(newNode);
         } else {
+            //TODO: check this
+            p->setSpirit(team->getLastInserted()->getValue().player->getSpirit()*p->getSpirit());
             while(currNode->getParent()!= nullptr) {
                 currNode = currNode->getParent();
             }

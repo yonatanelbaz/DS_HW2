@@ -4,7 +4,9 @@
 #ifndef DATA_STRUCTURES_1_PLAYER_H
 #define DATA_STRUCTURES_1_PLAYER_H
 #include "AVLTree.h"
-#include ""
+#include "UnionFind.h"
+#include "HashTable.h"
+#include "worldcup23a2.h"
 #include "Team.h"
 #include "wet2util.h"
 
@@ -17,7 +19,7 @@ private:
     int cardsReceived;
     bool goalKeeper;
     int ability;
-    const permutation_t &spirit;
+    permutation_t &spirit;
 
 public:
     static int compare_playerID(const std::shared_ptr<Player> &a, const std::shared_ptr<Player> &b);
@@ -28,13 +30,16 @@ public:
     Player(const Player& other);
     void update(int gamesPlayed, int scoredGoals, int cardsReceived);
     void updateTeam();
+    void setSpirit(const permutation_t& spirit);
     int getGamesPlayed();
     int getPlayerGoals();
     int getCards();
+    permutation_t& getSpirit();
     int getAbility();
     int getPlayerId();
     bool getGoalKeeper();
     int getTeamId();
+    void setSpirit(const permutation_t& spirit);
     void setTeam(std::shared_ptr<Team> team);
     std::shared_ptr<Team> getTeam();
     std::shared_ptr<Player> getClosestBelow();

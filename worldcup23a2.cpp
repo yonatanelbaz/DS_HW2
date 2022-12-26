@@ -116,55 +116,60 @@ output_t<int> world_cup_t::play_match(int teamId1, int teamId2)
     if(teamId1<=0 || teamId2<=0 || teamId1 == teamId2) {
         return StatusType::INVALID_INPUT;
     }
-    std::shared_ptr<Team> tempTeam1 =  std::shared_ptr<Team>(new Team(teamId1, 0));
-    auto tempTeamNode1 = this -> teamsTree.findVal(tempTeam1);
-    if(tempTeamNode1 == nullptr) {
-        return StatusType::FAILURE;
+    try {
+        std::shared_ptr<Team> tempTeam1 =  std::shared_ptr<Team>(new Team(teamId1, 0));
+        auto tempTeamNode1 = this -> teamsTree.findVal(tempTeam1);
+        if(tempTeamNode1 == nullptr) {
+            return StatusType::FAILURE;
+        }
+        std::shared_ptr<Team> tempTeam2 =  std::shared_ptr<Team>(new Team(teamId2, 0));
+        auto tempTeamNode2 = this -> teamsTree.findVal(tempTeam2);
+        if(tempTeamNode2 == nullptr) {
+            return StatusType::FAILURE;
+        }
+        tempTeam1 = tempTeamNode1->getValue();
+        tempTeam2 = tempTeamNode2->getValue();
+        if(tempTeam1->getGoalkeepers()<=0 || tempTeam2->getGoalkeepers()<=0) {
+            return StatusType::FAILURE;
+        }
+        int teamAbility1 = tempTeam1->getSumAbility() + tempTeam1->getPoints();
+        int teamAbility2 = tempTeam2->getSumAbility() + tempTeam2->getPoints();
+        tempTeam1->setGamesPlayed(tempTeam1->getGamesPlayed()+1);
+        tempTeam2->setGamesPlayed(tempTeam2->getGamesPlayed()+1);
+        if(teamAbility1>teamAbility2) {
+            tempTeam1->setNumPoints(tempTeam1->getPoints() + WIN);
+            return TEAM1WINBYABILITY;
+            return StatusType::SUCCESS;
+        }
+        if(teamAbility2>teamAbility1) {
+            tempTeam2->setNumPoints(tempTeam2->getPoints() + WIN);
+            return TEAM1WINBYABILITY;
+            return StatusType::SUCCESS;
+        }
+        ////TODO: calc team spirits
+        int calcTeamSpirit1 = tempTeam1->getTeamSpirit().strength();
+        int calcTeamSpirit2 = tempTeam2->getTeamSpirit().strength();
+        if(calcTeamSpirit1>calcTeamSpirit2) {
+            tempTeam1->setNumPoints(tempTeam1->getPoints() + WIN);
+            return TEAM1WINBYSPIRIT;
+            return StatusType::SUCCESS;
+        }
+        if(calcTeamSpirit2 > calcTeamSpirit1) {
+            tempTeam2->setNumPoints(tempTeam2->getPoints() + WIN);
+            return TEAM2WINBYSPIRIT;
+            return StatusType::SUCCESS;
+        }
+        tempTeam1->setNumPoints(tempTeam1->getPoints() + TIE);
+        tempTeam2->setNumPoints(tempTeam2->getPoints() + TIE);
+        return RETURNTIE;
     }
-    std::shared_ptr<Team> tempTeam2 =  std::shared_ptr<Team>(new Team(teamId2, 0));
-    auto tempTeamNode2 = this -> teamsTree.findVal(tempTeam2);
-    if(tempTeamNode2 == nullptr) {
-        return StatusType::FAILURE;
+    catch(const std::exception& e) {
+        return StatusType::ALLOCATION_ERROR;
     }
-    tempTeam1 = tempTeamNode1->getValue();
-    tempTeam2 = tempTeamNode2->getValue();
-    if(tempTeam1->getGoalkeepers()<=0 || tempTeam2->getGoalkeepers()<=0) {
-        return StatusType::FAILURE;
-    }
-    int teamAbility1 = tempTeam1->getSumAbility() + tempTeam1->getPoints();
-    int teamAbility2 = tempTeam2->getSumAbility() + tempTeam2->getPoints();
-    tempTeam1->setGamesPlayed(tempTeam1->getGamesPlayed()+1);
-    tempTeam2->setGamesPlayed(tempTeam2->getGamesPlayed()+1);
-    if(teamAbility1>teamAbility2) {
-        tempTeam1->setNumPoints(tempTeam1->getPoints() + WIN);
-        return TEAM1WINBYABILITY;
-        return StatusType::SUCCESS;
-    }
-    if(teamAbility2>teamAbility1) {
-        tempTeam2->setNumPoints(tempTeam2->getPoints() + WIN);
-        return TEAM1WINBYABILITY;
-        return StatusType::SUCCESS;
-    }
-    ////TODO: calc team spirits
-    int calcTeamSpirit1;
-    int calcTeamSpirit2;
-    if(calcTeamSpirit1>calcTeamSpirit2) {
-        tempTeam1->setNumPoints(tempTeam1->getPoints() + WIN);
-        return TEAM1WINBYSPIRIT;
-        return StatusType::SUCCESS;
-    }
-    if(calcTeamSpirit2 > calcTeamSpirit1) {
-        tempTeam2->setNumPoints(tempTeam2->getPoints() + WIN);
-        return TEAM2WINBYSPIRIT;
-        return StatusType::SUCCESS;
-    }
-    tempTeam1->setNumPoints(tempTeam1->getPoints() + TIE);
-    tempTeam2->setNumPoints(tempTeam2->getPoints() + TIE);
-    return RETURNTIE;
-
 	// TODO: Your code goes here
 	return StatusType::SUCCESS;
 }
+////TODO: Change the way we calculate the amount of games
 
 output_t<int> world_cup_t::num_played_games_for_player(int playerId)
 {
@@ -269,6 +274,7 @@ output_t<int> world_cup_t::get_ith_pointless_ability(int i)
 
 output_t<permutation_t> world_cup_t::get_partial_spirit(int playerId)
 {
+
     if(playerId<=0) {
         return StatusType::INVALID_INPUT;
     }
@@ -276,6 +282,8 @@ output_t<permutation_t> world_cup_t::get_partial_spirit(int playerId)
     if(tempPlayerNode == nullptr) {
         return StatusType::FAILURE;
     }
+    return tempPlayerNode->getValue()->getSpirit();
+    /*
     auto tempTeam = this->worldCup.findTeam(playerId);
     if(tempTeam == nullptr) {
         return StatusType::FAILURE;
@@ -283,13 +291,37 @@ output_t<permutation_t> world_cup_t::get_partial_spirit(int playerId)
     if(tempTeam->getKnockedOut() == true) {
         return StatusType::FAILURE;
     }
-    
+    return this->worldCup.calcPartialSpirit();
+*/
 	// TODO: Your code goes here
 	return permutation_t();
 }
 
 StatusType world_cup_t::buy_team(int teamId1, int teamId2)
 {
+    if(teamId2<=0 || teamId1<=0 || teamId2 == teamId1) {
+        return StatusType::INVALID_INPUT;
+    }
+    try{
+        shared_ptr<Team> tempBuyerTeam = shared_ptr<Team>(new Team(teamId1, 0));
+        auto tempBuyerTeamNode = this -> teamsTree.findVal(tempBuyerTeam);
+        if(tempBuyerTeamNode == nullptr) {
+            return StatusType::FAILURE;
+        }
+        shared_ptr<Team> tempBoughtTeam = shared_ptr<Team>(new Team(teamId2, 0));
+        auto tempBoughtTeamNode = this -> teamsTree.findVal(tempBoughtTeam);
+        if(tempBoughtTeamNode == nullptr) {
+            return StatusType::FAILURE;
+        }
+        tempBuyerTeam = tempBuyerTeamNode->getValue();
+        tempBoughtTeam = tempBoughtTeamNode->getValue();
+        StatusType retStatus = this->worldCup.union(tempBuyerTeam, tempBoughtTeam);
+        this->teamsTree.remove(tempBoughtTeam);
+    }
+    catch(const std::exception& e) {
+        return StatusType::ALLOCATION_ERROR;
+    }
+
 	// TODO: Your code goes here
 	return StatusType::SUCCESS;
 }
